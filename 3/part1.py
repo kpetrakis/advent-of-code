@@ -21,23 +21,24 @@ def create_letters_list():
 
   return letters
 
-letters = create_letters_list() 
-priorities_sum = 0
-for d in data:
-  # ignore empty lines
-  if d.strip():
-    first_comp = set(d[:len(d)//2])
-    second_comp = set(d[len(d)//2:])
-    # print(first_comp, second_comp)
+if __name__ == "__main__": # because of the import in part2 
+  letters = create_letters_list() 
+  priorities_sum = 0
+  for d in data:
+    # ignore empty lines
+    if d.strip():
+      first_comp = set(d[:len(d)//2])
+      second_comp = set(d[len(d)//2:])
+      # print(first_comp, second_comp)
 
-    # find the item type that appears in both compartments
-    for item in first_comp:
-      if item in second_comp:
-        same_item = item
-        # print("same item:", item)
+      # find the item type that appears in both compartments
+      for item in first_comp:
+        if item in second_comp:
+          same_item = item
+          # print("same item:", item)
 
-    priority = letters.index(same_item) + 1
-    priorities_sum += priority
-    # print(priority)
+      priority = letters.index(same_item) + 1
+      priorities_sum += priority
+      # print(priority)
 
-print(priorities_sum)
+  print("sadf", priorities_sum)
