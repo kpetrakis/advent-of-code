@@ -1,7 +1,5 @@
 #!/usr/bin/env python
-import os
 from collections import defaultdict, deque
-import copy
 
 data = open('input.txt', 'r').read().rstrip().split('\n')
 
@@ -30,3 +28,12 @@ for line in data:
 
 answer1 = sum(v for v in sizes.values() if v <= 100000)
 print("answer part 1: ", answer1)
+
+# part 2
+free_space = 70000000 - max(v for v in sizes.values())
+space_to_go = 30000000 - free_space
+# print(free_space)
+# print(space_to_go)
+
+answer2 = min(v for v in sorted(sizes.values()) if v >= space_to_go)
+print("answer part 2: ", answer2)
