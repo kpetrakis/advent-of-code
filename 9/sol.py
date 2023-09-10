@@ -1,4 +1,64 @@
 #!/usr/bin/env python
+from collections import deque
+from collections.abc import Sequence
+
+class Rope(Sequence):
+  def __init__(self, num_of_knots):
+    self.knots = list() # head is first tail is last
+    for _ in range(num_of_knots):
+      self.knots.append(Knot(0, 0))
+
+  def __getitem__(self, i):
+    return self.knots[i]
+
+  def __len__(self):
+    return len(self.knots)
+
+  def __repr__(self):
+    return f"rope({len(self.knots)}): {self.knots}"
+
+  def adjust(self):
+    """
+    traverse the knots list and adjust every pair of knots to follow each other
+    """
+    for index1, index2 in zip(range(len(self)), range(1, len(self))):
+      #print(f"adjust {index2}")
+      #print(f"before adjust: {self.knots[index2]}") 
+      dist = (self.knots[index1].i - self.knots[index2].i, self.knots[index1].j - self.knots[index2].j)
+      absdist = (abs(self.knots[index1].i - self.knots[index2].i), abs(self.knots[index1].j - self.knots[index2].j))
+      touching = (absdist[0] == 0 and absdist[1]==0) or (absdist[0]<=1 and absdist[1] <=1) 
+      if not touching:
+        if dist[1] > 1 and dist[0] == 0:
+          #print("R")
+          self.knots[index2].move('R')
+        elif dist[1] < -1 and dist[0] == 0:
+          #print("L")
+          self.knots[index2].move('L')
+        elif dist[0] > 1 and dist[1] == 0:
+          #print("D")
+          self.knots[index2].move('D')
+        elif dist[0] < -1 and dist[1] == 0:
+          #print("U")
+          self.knots[index2].move('U')
+        elif (dist[0] < -1 and dist[1] >= 1) or (dist[1] > 1 and dist[0] <= -1):
+          # UR
+          #print("UR")
+          self.knots[index2].move('UR')
+        elif dist[0] < -1 and dist[1] <= -1 or (dist[1] <-1 and dist[0] <= -1):
+          # UL 
+          #print("UL")
+          self.knots[index2].move('UL')
+        elif (dist[0] > 1 and dist[1] >= 1) or (dist[1]>1 and dist[0] >=1):
+          # DR 
+          #print("DR")
+          self.knots[index2].move('DR')
+        elif (dist[0] > 1 and dist[1] <= -1) or (dist[1] < -1 and dist[0] >= 1):
+          # DL
+          #print("DL")
+          self.knots[index2].move('DL')
+      #print(f"after adjust: {self.knots[index2]}") 
+    #print("-------------------------------")
+
 class Knot:
   def __init__(self, i, j):
     #self.pos = (i, j) # (row, col)
@@ -35,55 +95,22 @@ data = open("input.txt", 'r').readlines()
 data = [d.strip('\n') for d in data]
 # print(data)
 
-head = Knot(0, 0)
-tail = Knot(0, 0)
 tail_positions = set() # the positions visited by tail
+rope = Rope(10)
+head = rope[0]
+tail = rope[-1]
 for row in data:
   direction, count = row[0], row[2:]
-  tail_positions.add((tail.i, tail.j))
+  #tail_positions.add((tail.i, tail.j))
 
   for c in range(int(count)):
     # print(f"head moved {direction}")
     head.move(direction)
 
-    dist = (head.i - tail.i, head.j - tail.j)
-    absdist = (abs(head.i - tail.i), abs(head.j - tail.j))
-    touching = (absdist[0] == 0 and absdist[1]==0) or (absdist[0]<=1 and absdist[1] <=1) 
-    if not touching:
-      if dist[1] > 1 and dist[0] == 0:
-        #print("R")
-        tail.move('R')
-      elif dist[1] < -1 and dist[0] ==0:
-        #print("L")
-        tail.move('L')
-      elif dist[0] > 1 and dist[1] == 0:
-        #print("D")
-        tail.move('D')
-      elif dist[0] < -1 and dist[1] == 0:
-        #print("U")
-        tail.move('U')
-
-      elif (dist[0] < -1 and dist[1] == 1) or (dist[1] > 1 and dist[0]==-1):
-        # UR
-        #print("UR")
-        tail.move('UR')
-      elif dist[0] < -1 and dist[1] == -1 or (dist[1] <-1 and dist[0] == -1):
-        # UL 
-        #print("UL")
-        tail.move('UL')
-      elif (dist[0] > 1 and dist[1] == 1) or (dist[1]>1 and dist[0] ==1):
-        # DR 
-        #print("DR")
-        tail.move('DR')
-      elif (dist[0] > 1 and dist[1] == -1) or (dist[1] < -1 and dist[0] == 1):
-        # DL
-        #print("DL")
-        tail.move('DL')
-
+    rope.adjust()
     tail_positions.add((tail.i, tail.j))
-     
-    # print("head:", head)
-    # print("tail:", tail)
 
-answer1 = len(tail_positions) 
-print("part 1 answer: ", answer1)
+# print("final rope:", rope)
+
+answer2 = len(tail_positions) 
+print("part 2 answer: ", answer2)
