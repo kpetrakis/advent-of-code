@@ -72,3 +72,24 @@ for i, line in enumerate(lines):
 graph = create_graph()
 answer1 = bfs(graph, start, dst)
 print("part 1:", answer1)
+
+# ------------------------------------------
+# part 2
+
+# get all pos's of S and 'a'
+start_symbols = ['S', 'a']
+start_pos = []
+for i, line in enumerate(lines):
+  for symbol in start_symbols:
+    if symbol in line:
+      start = (i, line.index(symbol))
+      start_pos.append(start)
+
+graph = create_graph()
+min_steps = answer1 
+for start in start_pos:
+  steps = bfs(graph, start, dst) # run bfs with every different root
+  if steps < min_steps:
+    min_steps = steps
+ 
+print("part 2:", min_steps)
