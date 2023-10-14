@@ -40,8 +40,7 @@ def part1():
           moved = True # next cell is air, can move
           sand_pos = next_pos # move sand
           break
-        # no available next move
-        moved = False # all next cells are either rocks or sand, can't move --> must rest
+        moved = False
 
       if sand_pos[1] > max_y:
         abyss = True
@@ -54,3 +53,27 @@ def part1():
   return count
 
 print("part1:", part1())
+
+
+def part2():
+  '''
+  something in between bfs and dfs
+  pick a node at random each time and add it in queue if it
+  is not a rock position
+  '''
+  y_max = max(y for _, y in rocks) + 1
+  sand = {(500, 0)}
+  queue = {(500,0)}
+  while queue:
+    sand_pos = queue.pop() # pick random node, else it is too slow!
+    if sand_pos[1] >= y_max:
+      continue
+    for dx in (0, -1, 1):
+      next_pos = (sand_pos[0] + dx, sand_pos[1] + 1)
+      if next_pos not in rocks:
+        sand.add(next_pos)
+        queue.add(next_pos)
+
+  return len(sand)
+
+print("part2:", part2())
