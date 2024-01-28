@@ -22,7 +22,7 @@ for k, i, j in itertools.product(V, V, V):
   D[i, j] = min(D[i, j], D[i, k] + D[k, j])
 
 @cache
-def search(t, v, unopened):
+def search(t, v, unopened, e=False):
   if t <= 0:
     return 0
 
@@ -31,9 +31,12 @@ def search(t, v, unopened):
   #   max_pressure = max(max_pressure, F[u] * (t - D[v,u] - 1) + search(t-D[v,u]-1, u, unopened-{u}))
 
   # the above loop in one line
-  max_pressure = max(itertools.chain([0], (F[u] * (t-D[v,u]-1) + search(t-D[v,u]-1, u, unopened-{u}) for u in unopened)))
+  max_pressure = max(itertools.chain([search(26, 'AA', unopened) if e else 0], (F[u] * (t-D[v,u]-1) + search(t-D[v,u]-1, u, unopened-{u}, e) for u in unopened)))
 
   return max_pressure
 
 max_pressure = search(30, 'AA', frozenset(F)) # stin arxi oles einai unopened, frozenset gia na einai hashable
 print("Part 1:", max_pressure)
+max_pressure2 = search(26, 'AA', frozenset(F), e=True)
+print("Part 2:", max_pressure2)
+
