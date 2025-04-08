@@ -1,5 +1,8 @@
 #!/usr/bin/env python
 import re
+import operator
+from functools import reduce 
+from itertools import starmap
 
 def parse(file: str) -> list:
   with open(file, 'r') as f:
@@ -26,4 +29,17 @@ def part1():
 
   return total
 
+time = int(''.join(map(str, times)))
+dist = int(''.join(map(str, distances)))
+
+def part2():
+  total = 1
+  pairs = zip(range(time), range(time, 0, -1))
+  # products = [reduce(operator.mul, pair) for pair in pairs]
+  num_ways = sum(1 for x in filter(lambda x: x>dist, starmap(operator.mul, pairs)))
+  total *= num_ways
+
+  return total
+
 print("Part1 = ", part1())
+print("Part2 = ", part2())
